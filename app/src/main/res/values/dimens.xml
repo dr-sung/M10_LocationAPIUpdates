@@ -1,0 +1,11 @@
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="layout_padding">12sp</dimen>
+
+    <dimen name="default_text_size">16sp</dimen>
+    <dimen name="ui_group_top_margin">24sp</dimen>
+
+    <dimen name="small_margin_left">10sp</dimen>
+</resources>
