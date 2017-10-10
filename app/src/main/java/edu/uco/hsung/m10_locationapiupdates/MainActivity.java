@@ -128,6 +128,15 @@ public class MainActivity extends Activity implements
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
 
+        if (getApplicationContext().checkSelfPermission(
+                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            MainActivity.this.requestPermissions(
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSION_ACCESS_FINE_LOCATION);
+        }
+
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
 
@@ -241,16 +250,12 @@ public class MainActivity extends Activity implements
     protected void startLocationUpdates() {
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
-        if (getApplicationContext().checkSelfPermission(
-                android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-
-            MainActivity.this.requestPermissions(
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSION_ACCESS_FINE_LOCATION);
+        try {
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
     }
 
     /**
@@ -359,16 +364,12 @@ public class MainActivity extends Activity implements
         // moves to a new location, and then changes the device orientation, the original location
         // is displayed as the activity is re-created.
         if (mCurrentLocation == null) {
-            if (getApplicationContext().checkSelfPermission(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED) {
-
-                MainActivity.this.requestPermissions(
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSION_ACCESS_FINE_LOCATION);
+            try {
+                mCurrentLocation = LocationServices.FusedLocationApi
+                        .getLastLocation(mGoogleApiClient);
+            }catch (SecurityException e) {
+                e.printStackTrace();
             }
-            mCurrentLocation = LocationServices.FusedLocationApi
-                    .getLastLocation(mGoogleApiClient);
             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
             updateUI();
         }
